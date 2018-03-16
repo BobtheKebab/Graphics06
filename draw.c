@@ -25,6 +25,25 @@
 void add_box( struct matrix * edges,
               double x, double y, double z,
               double width, double height, double depth ) {
+
+  //Front face
+  add_edge(edges, x, y, z, x, y - height, z);
+  add_edge(edges, x, y - height, z, x + width, y - height, z);
+  add_edge(edges, x, y, z, x + width, y, z);
+  add_edge(edges, x + width, y, z, x + width, y - height, z);
+
+  //Back face
+  add_edge(edges, x, y, z + depth, x, y - height, z + depth);
+  add_edge(edges, x, y - height, z + depth, x + width, y - height, z + depth);
+  add_edge(edges, x, y, z + depth, x + width, z + depth);
+  add_edge(edges, x + width, y, z + depth, x + width, y - height, z + depth);
+
+  //The rest
+  add_edge(edges, x, y, z, x, y, z + depth);
+  add_edge(edges, x + width, y, z, x, y, z + depth);
+  add_edge(edges, x, y - height, z, x, y, z + depth);
+  add_edge(edges, x + width, y - height, z, x, y, z + depth);
+  
 }
 
 /*======== void add_sphere() ==========
