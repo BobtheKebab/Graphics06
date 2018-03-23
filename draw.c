@@ -35,14 +35,14 @@ void add_box( struct matrix * edges,
   //Back face
   add_edge(edges, x, y, z + depth, x, y - height, z + depth);
   add_edge(edges, x, y - height, z + depth, x + width, y - height, z + depth);
-  add_edge(edges, x, y, z + depth, x + width, z + depth);
+  add_edge(edges, x, y, z + depth, x + width, y, z + depth);
   add_edge(edges, x + width, y, z + depth, x + width, y - height, z + depth);
 
   //The rest
   add_edge(edges, x, y, z, x, y, z + depth);
-  add_edge(edges, x + width, y, z, x, y, z + depth);
-  add_edge(edges, x, y - height, z, x, y, z + depth);
-  add_edge(edges, x + width, y - height, z, x, y, z + depth);
+  add_edge(edges, x + width, y, z, x + width, y, z + depth);
+  add_edge(edges, x, y - height, z, x, y - height, z + depth);
+  add_edge(edges, x + width, y - height, z, x + width, y - height, z + depth);
   
 }
 
@@ -64,7 +64,13 @@ void add_box( struct matrix * edges,
 void add_sphere( struct matrix * edges, 
                  double cx, double cy, double cz,
                  double r, int step ) {
-  return;
+  
+  struct matrix * temp = generate_sphere(cx, cy, cz, r, step);
+  int count = 0, x = temp->m[0][count], y = temp->m[1][count], z = temp->m[2][count];
+  while (count < temp->lastcol) {
+    add_edge(temp, x, y, z, x, y, z + 1);
+    count++;
+  }
 }
 
 /*======== void generate_sphere() ==========
@@ -81,7 +87,21 @@ void add_sphere( struct matrix * edges,
   ====================*/
 struct matrix * generate_sphere(double cx, double cy, double cz,
                                 double r, int step ) {
-  return NULL;
+
+  struct matrix * temp = new_matrix(4, 4);
+  double phi = 0, theta = 0, step1 = 2 * M_PI / step, step2 = M_PI / step;
+
+  while (phi < 2 * M_PI) {
+    while (theta < M_PI) {
+      add_point(temp, r * cos(theta) + cx,
+		r * sin(theta) * cos(phi) + cy,
+		r * sin(theta) * sin(phi) + cz);
+      theta += step2;
+    }
+    phi += step1;
+  }
+  
+  return temp;
 }
 
 /*======== void add_torus() ==========
@@ -103,7 +123,13 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
 void add_torus( struct matrix * edges, 
                 double cx, double cy, double cz,
                 double r1, double r2, int step ) {
-  return;
+
+  struct matrix * temp = generate_torus(cx, cy, cz, r1, r2, step);
+  int count = 0, x = temp->m[0][count], y = temp->m[1][count], z = temp->m[2][count];
+  while (count < temp->lastcol) {
+    add_edge(edges, x, y, z, x, y, z + 1);
+    count++;
+  }
 }
 
 /*======== void generate_torus() ==========
@@ -120,7 +146,18 @@ void add_torus( struct matrix * edges,
   ====================*/
 struct matrix * generate_torus( double cx, double cy, double cz,
                                 double r1, double r2, int step ) {
-  return NULL;
+  struct matrix * temp = new_matrix(4, 4);
+  double theta = 0, phi = 0, step1 = 2 * M_PI / step;
+  while (theta < 2 * M_PI) {
+    while (phi < 2 * M_PI) {
+      add_point(temp, cos(phi) * (r1 * cos(theta) + r2) + cx,
+		r1 * sin(theta) + cy,
+		-sin(phi) * (r1 * cos(theta) + r2) + cz);
+      phi += step1;
+    }
+    theta += step1;
+  }
+  return temp;
 }
 
 /*======== void add_circle() ==========

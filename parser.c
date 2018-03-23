@@ -106,6 +106,27 @@ void parse_file ( char * filename,
       add_circle( edges, xvals[0], yvals[0], zvals[0], r, step);
     }//end of circle
 
+    else if (strncmp(line, "box", strlen(line)) == 0) {
+      fgets(line, sizeof(line), f);
+      double x, y, z, width, height, depth;
+      sscanf(line, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &width, &height, &depth);
+      add_box(edges, x, y, z, width, height, depth);
+    }
+
+    else if (strncmp(line, "sphere", strlen(line)) == 0) {
+      fgets(line, sizeof(line), f);
+      double x, y, z, r;
+      sscanf(line, "%lf %lf %lf %lf", &x, &y, &z, &r);
+      add_sphere(edges, x, y, z, r, step);
+    }
+
+    else if (strncmp(line, "torus", strlen(line)) == 0) {
+      fgets(line, sizeof(line), f);
+      double x, y, z, r1, r2;
+      sscanf(line, "%lf %lf %lf %lf %lf", &x, &y, &z, &r1, &r2);
+      add_torus(edges, x, y, z, r1, r2, step);
+    }
+    
     else if ( strncmp(line, "hermite", strlen(line)) == 0 ||
 	      strncmp(line, "bezier", strlen(line)) == 0 ) {
       if (strncmp(line, "hermite", strlen(line)) == 0 )
